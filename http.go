@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"runtime"
 )
 
 func (a *JetApi) CreateRequest(method, path string, query url.Values, body io.Reader) *http.Request {
@@ -44,7 +45,7 @@ func (a *JetApi) CreatePostRequest(path string, query url.Values, body interface
 }
 
 func (a *JetApi) DoRequest(req *http.Request, model interface{}) error {
-	resp, err := http.Do(req)
+	resp, err := a.client.Do(req)
 	if err != nil {
 		return err
 	}

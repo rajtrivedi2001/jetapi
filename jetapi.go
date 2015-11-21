@@ -1,5 +1,9 @@
 package jetapi
 
+import (
+	"net/http"
+)
+
 type JetApi struct {
 	key     string
 	secret  string

@@ -23,7 +23,7 @@ func (a *JetApi) GetToken() (*JetToken, error) {
 	return token, a.DoRequest(req, &token)
 }
 
-func (a *JetToken) EnsureValidToken() error {
+func (a *JetApi) EnsureValidToken() error {
 	if a.token == nil || time.Now().After(a.token.Expiry) {
 		token, err := a.GetToken()
 		if err != nil {
