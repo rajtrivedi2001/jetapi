@@ -3,6 +3,7 @@ package jetapi
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -25,7 +26,7 @@ func (a *JetApi) CreateRequest(method, path string, query url.Values, body io.Re
 		req.Header.Set("Content-Type", "application/json")
 	}
 	if a.token != nil {
-		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", a.token.Token))
+		req.Header.Set("Authorization", fmt.Sprintf("bearer %s", a.token.Token))
 	}
 
 	return req
@@ -45,6 +46,7 @@ func (a *JetApi) CreatePostRequest(path string, query url.Values, body interface
 }
 
 func (a *JetApi) DoRequest(req *http.Request, model interface{}) error {
+	//fmt.Println("Jet Api Requesting: " + req.URL.String())
 	resp, err := a.client.Do(req)
 	if err != nil {
 		return err
@@ -56,5 +58,11 @@ func (a *JetApi) DoRequest(req *http.Request, model interface{}) error {
 		return err
 	}
 
+	if resp.StatusCode > 399 {
+		return errors.New(
+			fmt.Sprintf("Error %d: %s", resp.StatusCode, string(respBody)))
+	}
+
+	// fmt.Println(string(respBody))
 	return json.Unmarshal(respBody, model)
 }
